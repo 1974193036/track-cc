@@ -1,0 +1,50 @@
+{
+  "name": "track-sunshine",
+  "version": "1.0.0",
+  "description": "基于 行为上报，实现了 用户行为、错误监控、页面跳转、页面白屏检测、页面性能检测等上报功能。适用于 Vue、React、Angular 等框架",
+  "main": "dist/index.min.js",
+  "module": "dist/index.esm.js",
+  "type": "module",
+  "scripts": {
+    "dev": "rollup -c -w",
+    "build": "rollup -c"
+  },
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "track",
+    "tracker",
+    "埋点",
+    "track sdk",
+    "前端埋点",
+    "analyse"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^25.0.3",
+    "@rollup/plugin-json": "^6.0.0",
+    "@rollup/plugin-node-resolve": "^15.1.0",
+    "@typescript-eslint/eslint-plugin": "^6.2.1",
+    "@typescript-eslint/parser": "^6.2.1",
+    "eslint": "^8.46.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "prettier": "^3.0.1",
+    "rollup": "^3.27.0",
+    "rollup-plugin-dts": "^5.3.1",
+    "rollup-plugin-typescript2": "^0.35.0",
+    "rollup-plugin-uglify": "^6.0.4",
+    "ts-loader": "^9.4.4",
+    "typescript": "^5.1.6",
+    "@types/lodash": "^4.14.196",
+    "@types/ua-parser-js": "^0.7.36",
+    "error-stack-parser": "^2.1.4",
+    "js-base64": "^3.7.5",
+    "lodash": "^4.17.21",
+    "pako": "^2.1.0",
+    "rrweb": "2.0.0-alpha.4",
+    "ua-parser-js": "^1.0.35",
+    "web-vitals": "^3.4.0"
+  }
+}
