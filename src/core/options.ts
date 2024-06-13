@@ -4,6 +4,7 @@ import merge from 'lodash/merge'
 import isArray from 'lodash/isArray'
 import uniqBy from 'lodash/uniqBy'
 import { __sunshine_track__, validTypes } from '../utils'
+import eventTrack from './event/event'
 
 const getInitOptions = (): IOptions => ({
   projectKey: '',
@@ -129,6 +130,15 @@ const options = new Options()
 
 __sunshine_track__.options = options
 
+// console.log('__sunshine_track__', __sunshine_track__)
+
 export const setupOptions = (o: IOptions) => {
-  console.log(o)
+  options.set(o)
+  const { report: reportOptions, cacheType, maxEvents, projectKey, log, userId } = options.get()
+  console.log(options.get())
+  eventTrack.setOptions({
+    cacheType,
+    projectKey,
+    maxEvents,
+  })
 }

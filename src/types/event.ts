@@ -1,4 +1,5 @@
 import { IDeviceInfo } from './global'
+import { CacheType } from './options'
 
 export const enum StatusType {
   Ok = 'ok',
@@ -36,3 +37,9 @@ export interface ICommonReportParams {
 }
 
 export type IReportParams = IEventParams & ICommonReportParams
+
+export interface IEventOptions {
+  cacheType: CacheType
+  projectKey: string
+  maxEvents: number
+}
