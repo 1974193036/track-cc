@@ -3,8 +3,9 @@ import { EventType, PropType } from '../types'
 import merge from 'lodash/merge'
 import isArray from 'lodash/isArray'
 import uniqBy from 'lodash/uniqBy'
-import { __sunshine_track__, validTypes } from '../utils'
+import { __sunshine_track__, validTypes, setLogFlag } from '../utils'
 import eventTrack from './event/event'
+import report from './report'
 
 const getInitOptions = (): IOptions => ({
   projectKey: '',
@@ -141,4 +142,9 @@ export const setupOptions = (o: IOptions) => {
     projectKey,
     maxEvents,
   })
+  report.setOptions({
+    ...reportOptions,
+    userId,
+  })
+  setLogFlag(log)
 }

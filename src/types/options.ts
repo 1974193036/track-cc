@@ -51,3 +51,5 @@ export interface IOptions {
 }
 
 export type PartialOptions = Partial<IOptions>
+
+export type IReportClassOptions = IReportOptions & { userId: UserIdType }

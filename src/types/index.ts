@@ -1,5 +1,7 @@
 export * from './global'
+export * from './base'
 export * from './event'
 export * from './options'
 export * from './utils'
 export * from './cache'
+export * from './request'
