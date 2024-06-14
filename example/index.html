@@ -16,6 +16,8 @@
     <button id="normalFetch" onclick="onClickNativeFetch()">Fetch正常请求</button>
     <button id="exceptionFetch" onclick="onClickNativeErrorFetch()">Fetch异常请求</button>
     <button id="promiseError" onclick="promiseError()">promiseError</button>
+    <button id="logUpload" onclick="monitorLog1()">手动上报-添加到缓存中-等到达到阈值再上报</button>
+    <button id="logUpload" onclick="monitorLog2()">手动上报-立即上报</button>
   </body>
   <script>
     const options = {
@@ -117,6 +119,20 @@
         })
       promiseWrap().then(res => {
         console.log('res', res)
+      })
+    }
+
+    function monitorLog1() {
+      MyTrack.add({
+        type: 'click',
+        data: 'add track',
+      })
+    }
+
+    function monitorLog2() {
+      MyTrack.report({
+        type: 'click',
+        data: 'report track',
       })
     }
   </script>

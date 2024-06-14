@@ -62,3 +62,9 @@ export interface IRouteParams {
   from: string
   to: string
 }
+
+export interface ICustomEventParams {
+  type: any
+  time?: number
+  data: any
+}
