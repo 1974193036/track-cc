@@ -113,7 +113,7 @@ const EventCollection = {
   },
   // 监听全局js错误
   [EventType.Error]: (e: IErrorTarget) => {
-    console.log(e)
+    // console.log(e)
     const { target, error, message } = e
     if (!target?.localName) {
       const stackFrame = ErrorStackParser.parse(!target ? e : error)[0]
