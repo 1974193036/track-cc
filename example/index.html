@@ -9,6 +9,7 @@
   <body>
     <div id="app"></div>
     <button id="codeErr" onclick="codeError()">代码错误</button>
+    <button id="hashChange" onclick="hashChange()">改变hash</button>
   </body>
   <script>
     const options = {
@@ -36,6 +37,10 @@
     function codeError() {
       let a = {}
       a.split('/')
+    }
+
+    function hashChange() {
+      window.location.hash = 'xxx'
     }
   </script>
 </html>

@@ -1,7 +1,9 @@
-import { EventType, StatusType } from '../../types'
+import ErrorStackParser from 'error-stack-parser'
+import { EventType, StatusType, type IErrorTarget } from '../../types'
 import options from '../options'
 import { getTargetDomByPointerEvent, getTimestamp, htmlElementAsString } from '../../utils'
 import eventTrack from './event'
+import report from '../report'
 
 const EventCollection = {
   // 监控全局的点击事件
@@ -43,6 +45,37 @@ const EventCollection = {
         time: getTimestamp(),
       })
     }
+  },
+  // 监听全局js错误
+  [EventType.Error]: (e: IErrorTarget) => {
+    console.log(e)
+    const { target, error, message } = e
+    if (!target?.localName) {
+      const stackFrame = ErrorStackParser.parse(!target ? e : error)[0]
+      const { fileName, columnNumber: column, lineNumber: line } = stackFrame
+      const errorData = {
+        type: EventType.Error,
+        message,
+        fileName,
+        line,
+        column,
+      }
+      // eventTrack.add({
+      //   data: errorData,
+      //   time: getTimestamp(),
+      //   status: StatusType.Error,
+      // });
+      report.send({
+        type: EventType.Error,
+        data: errorData,
+        time: getTimestamp(),
+        status: StatusType.Error,
+      })
+    }
+  },
+  // 监听hashchange
+  [EventType.HashChange]: () => {
+    console.log('HashChange')
   },
 }
 

@@ -49,3 +49,11 @@ export interface IReplaceParams {
   type: EventType
   callback: Callback
 }
+
+export interface IErrorTarget {
+  target?: {
+    localName?: string
+  }
+  error?: any
+  message?: string
+}

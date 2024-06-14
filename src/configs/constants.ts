@@ -21,6 +21,7 @@ export const NATIVE_EVENTS = [
   'popstate',
   'replaceState',
   'pushState',
+  'hashchange',
   'unhandledrejection',
   'loadend',
 ]

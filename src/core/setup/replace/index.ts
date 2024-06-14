@@ -13,4 +13,14 @@ export const setupReplace = () => {
       type: EventType.Click,
       callback: EventCollection[EventType.Click],
     })
+  switchMap[EventType.Error] &&
+    addListenOrReplace({
+      type: EventType.Error,
+      callback: EventCollection[EventType.Error],
+    })
+  switchMap[EventType.HashChange] &&
+    addListenOrReplace({
+      type: EventType.HashChange,
+      callback: EventCollection[EventType.HashChange],
+    })
 }

@@ -23,6 +23,12 @@ const listenOrReplace = (type: EventType) => {
     case EventType.Click:
       listenWindowClick()
       break
+    case EventType.Error:
+      listenError()
+      break
+    case EventType.HashChange:
+      listenHashChange()
+      break
   }
 }
 
@@ -34,5 +40,26 @@ const listenWindowClick = () => {
       emit(EventType.Click, e)
     }, 300),
     capture: true,
+  })
+}
+
+const listenError = () => {
+  on({
+    el: _global,
+    eventName: 'error',
+    event: (e: ErrorEvent) => {
+      emit(EventType.Error, e)
+    },
+    capture: true,
+  })
+}
+
+const listenHashChange = () => {
+  on({
+    el: _global,
+    eventName: 'hashchange',
+    event: (e: HashChangeEvent) => {
+      emit(EventType.HashChange, e)
+    },
   })
 }
