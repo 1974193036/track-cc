@@ -18,3 +18,12 @@ export const install = (Vue: any, options: IOptions) => {
     if (handler) handler.apply(null, [err, vm, info])
   }
 }
+
+/**
+ * 收集react ErrorBoundary中的错误对象
+ * 需要用户手动在componentDidCatch中设置
+ * @param err ErrorBoundary中的componentDidCatch的一个参数error
+ */
+export const errorBoundaryReport = (err: Error): void => {
+  EventCollection[EventType.Error](err)
+}

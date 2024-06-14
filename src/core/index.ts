@@ -1,4 +1,4 @@
-import { install, init } from './init'
+import { install, errorBoundaryReport, init } from './init'
 import { default as reportData } from './report'
 import { getTimestamp } from '../utils'
 import eventTrack from './event/event'
@@ -26,6 +26,7 @@ const report = (params: ICustomEventParams) => {
 
 const Track = {
   install, // 提供给vue注册
+  errorBoundaryReport, // 提供给react
   init,
   add,
   report,
