@@ -1,5 +1,5 @@
 import options from '../../options'
-import { EventType } from '../../../types'
+import { EventType, type HttpData } from '../../../types'
 import EventCollection from '../../event'
 import { addListenOrReplace } from './replace'
 
@@ -27,5 +27,12 @@ export const setupReplace = () => {
     addListenOrReplace({
       type: EventType.History,
       callback: EventCollection[EventType.History],
+    })
+  switchMap[EventType.XHR] &&
+    addListenOrReplace({
+      type: EventType.XHR,
+      callback: (data: HttpData) => {
+        EventCollection[EventType.Http](data, EventType.XHR)
+      },
     })
 }

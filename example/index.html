@@ -11,6 +11,8 @@
     <button id="codeErr" onclick="codeError()">代码错误</button>
     <button id="hashChange" onclick="hashChange()">改变hash</button>
     <button id="hashChange" onclick="pushStateChange()">改变pushState</button>
+    <button id="normalReq" onclick="onClickXhrNormal()">xhr正常请求</button>
+    <button id="exceptionReq" onclick="onClickXhrError()">xhr异常请求</button>
   </body>
   <script>
     const options = {
@@ -47,6 +49,30 @@
 
     function pushStateChange() {
       window.history.pushState({}, '', '/example/xxx')
+    }
+
+    function onClickXhrNormal() {
+      const xhr = new XMLHttpRequest()
+      xhr.open('get', 'https://jsonplaceholder.typicode.com/todos/1')
+      xhr.setRequestHeader('content-type', 'application/json')
+      xhr.send()
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+          console.log(xhr.responseText)
+        }
+      }
+    }
+
+    function onClickXhrError() {
+      const xhr = new XMLHttpRequest()
+      xhr.open('get', 'https://jsonplaceholder.typicode.com/xxx')
+      xhr.setRequestHeader('content-type', 'application/json')
+      xhr.send()
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+          console.log(xhr.responseText)
+        }
+      }
     }
   </script>
 </html>

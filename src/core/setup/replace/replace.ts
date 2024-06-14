@@ -1,6 +1,17 @@
 import throttle from 'lodash/throttle'
-import { Callback, IReplaceParams, EventType, voidFunc } from '../../../types'
-import { on, EventEmitter, _global, getCurrentHref } from '../../../utils'
+import isFunction from 'lodash/isFunction'
+import { Callback, IReplaceParams, EventType, voidFunc, RequestMethod } from '../../../types'
+import { on, EventEmitter, _global, getCurrentHref, getTimestamp } from '../../../utils'
+import options from '../../options'
+
+// 判断请求的 url 需不需要过滤
+const checkIsDisabledUrl = (url: string, method: string) => {
+  const { filterHttpUrl, report } = options.get()
+  const { url: reportUrl } = report
+  const isReportUrl = reportUrl === url && method === RequestMethod.POST
+  const isFilterHttpUrl = isFunction(filterHttpUrl) && filterHttpUrl(url, method)
+  return isReportUrl || isFilterHttpUrl
+}
 
 const eventEmitter = new EventEmitter()
 
@@ -31,6 +42,9 @@ const listenOrReplace = (type: EventType) => {
       break
     case EventType.History:
       replaceHistory()
+      break
+    case EventType.XHR:
+      replaceXhr()
       break
   }
 }
@@ -113,4 +127,53 @@ export function replaceAop(
       source[name] = wrapped
     }
   }
+}
+
+const replaceXhr = () => {
+  const xhrProto = XMLHttpRequest.prototype
+  replaceAop(xhrProto, 'open', (originalOpen: voidFunc) => {
+    return function (this: any, ...args: any[]): void {
+      const [method, url] = args
+      this.trackParams = {
+        method: (method as string).toLowerCase(),
+        url,
+        time: getTimestamp(),
+        type: EventType.XHR,
+      }
+      originalOpen.apply(this, args)
+    }
+  })
+  replaceAop(xhrProto, 'send', (originalSend: voidFunc) => {
+    return function (this: any, ...args: any[]): void {
+      const [requestData] = args
+      const { method, url } = this.trackParams
+      on({
+        el: this,
+        eventName: 'loadend',
+        event(this: any) {
+          if (checkIsDisabledUrl(url, method)) return
+
+          const { responseType, response, status } = this
+          this.trackParams.requestData = requestData
+          this.trackParams.Status = status
+          this.trackParams.elapsedTime = getTimestamp() - this.trackParams.time
+          if (['', 'json', 'text'].includes(responseType)) {
+            const { checkHttpStatus } = options.get()
+            // 用户设置handleHttpStatus函数来判断接口是否正确，只有接口报错时才保留response
+            if (isFunction(checkHttpStatus)) {
+              if (checkHttpStatus(response)) {
+                this.trackParams.response = response && JSON.parse(response)
+              } else {
+                this.trackParams.response = null
+              }
+            } else {
+              this.trackParams.response = response && JSON.parse(response)
+            }
+          }
+          emit(EventType.XHR, this.trackParams)
+        },
+      })
+      originalSend.apply(this, args)
+    }
+  })
 }

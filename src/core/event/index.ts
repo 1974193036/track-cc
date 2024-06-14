@@ -1,6 +1,12 @@
 import ErrorStackParser from 'error-stack-parser'
 import takeRight from 'lodash/takeRight'
-import { EventType, StatusType, type IErrorTarget, type IRouteParams } from '../../types'
+import {
+  EventType,
+  StatusType,
+  type IErrorTarget,
+  type IRouteParams,
+  type HttpData,
+} from '../../types'
 import options from '../options'
 import {
   getTargetDomByPointerEvent,
@@ -10,6 +16,7 @@ import {
 } from '../../utils'
 import eventTrack from './event'
 import report from '../report'
+import { httpTransform } from '../transform'
 
 const hashCallback = () => {
   let urls: any[] = []
@@ -132,7 +139,35 @@ const EventCollection = {
   },
   // 监听hashchange
   [EventType.HashChange]: hashCallback(),
+  // 监听history页路由
   [EventType.History]: historyCallback(),
+  // 监听xhr
+  [EventType.Http]: (data: HttpData, type: EventType.Fetch | EventType.XHR) => {
+    // console.log(data, type)
+    const result = httpTransform(data)
+    const { url } = options.getReport()
+
+    if (result.status === StatusType.Error) {
+      // 上报接口错误
+      report.send({
+        type,
+        data: result,
+        status: StatusType.Error,
+        time: data.time,
+      })
+      return
+    }
+
+    // 添加用户行为，去掉自身上报的接口行为
+    if (!data.url.includes(url)) {
+      eventTrack.add({
+        type,
+        data: result,
+        status: StatusType.Ok,
+        time: data.time,
+      })
+    }
+  },
 }
 
 export default EventCollection
