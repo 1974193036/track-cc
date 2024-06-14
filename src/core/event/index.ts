@@ -1,9 +1,40 @@
 import ErrorStackParser from 'error-stack-parser'
+import takeRight from 'lodash/takeRight'
 import { EventType, StatusType, type IErrorTarget } from '../../types'
 import options from '../options'
-import { getTargetDomByPointerEvent, getTimestamp, htmlElementAsString } from '../../utils'
+import {
+  getTargetDomByPointerEvent,
+  getTimestamp,
+  htmlElementAsString,
+  parseUrlToObj,
+} from '../../utils'
 import eventTrack from './event'
 import report from '../report'
+
+const hashCallback = () => {
+  let urls: any[] = []
+  return (data: HashChangeEvent) => {
+    // console.log('hashCallback', data)
+    const { historyUrlsNum } = options.get()
+    const { oldURL, newURL } = data
+    const { relative: from } = parseUrlToObj(oldURL)
+    const { relative: to } = parseUrlToObj(newURL)
+    if (to) {
+      urls.push(to)
+    }
+    urls = takeRight(urls, historyUrlsNum)
+    eventTrack.add({
+      type: EventType.HashChange,
+      data: {
+        from,
+        to,
+        urls: [...urls],
+      },
+      status: StatusType.Ok,
+      time: getTimestamp(),
+    })
+  }
+}
 
 const EventCollection = {
   // 监控全局的点击事件
@@ -74,9 +105,7 @@ const EventCollection = {
     }
   },
   // 监听hashchange
-  [EventType.HashChange]: () => {
-    console.log('HashChange')
-  },
+  [EventType.HashChange]: hashCallback(),
 }
 
 export default EventCollection

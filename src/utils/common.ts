@@ -47,3 +47,21 @@ export function htmlElementAsString(target: HTMLElement): string {
   const innerText = target.innerText
   return `<${tagName}${id}${classNames !== '' ? classNames : ''}>${innerText}</${tagName}>`
 }
+
+export const parseUrlToObj = (url: string) => {
+  if (!url) {
+    return {}
+  }
+  const match = url.match(/^(([^:\/?#]+):)?(\/\/([^\/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?$/)
+  if (!match) {
+    return {}
+  }
+  const query = match[6] || ''
+  const fragment = match[8] || ''
+  return {
+    host: match[4],
+    path: match[5],
+    protocol: match[2],
+    relative: match[5] + query + fragment,
+  }
+}
