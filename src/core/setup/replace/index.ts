@@ -23,4 +23,9 @@ export const setupReplace = () => {
       type: EventType.HashChange,
       callback: EventCollection[EventType.HashChange],
     })
+  switchMap[EventType.History] &&
+    addListenOrReplace({
+      type: EventType.History,
+      callback: EventCollection[EventType.History],
+    })
 }

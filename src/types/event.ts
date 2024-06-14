@@ -57,3 +57,8 @@ export interface IErrorTarget {
   error?: any
   message?: string
 }
+
+export interface IRouteParams {
+  from: string
+  to: string
+}

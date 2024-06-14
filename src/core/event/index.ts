@@ -1,6 +1,6 @@
 import ErrorStackParser from 'error-stack-parser'
 import takeRight from 'lodash/takeRight'
-import { EventType, StatusType, type IErrorTarget } from '../../types'
+import { EventType, StatusType, type IErrorTarget, type IRouteParams } from '../../types'
 import options from '../options'
 import {
   getTargetDomByPointerEvent,
@@ -33,6 +33,32 @@ const hashCallback = () => {
       status: StatusType.Ok,
       time: getTimestamp(),
     })
+  }
+}
+
+const historyCallback = () => {
+  let urls: any[] = []
+  return (data: IRouteParams) => {
+    console.log('historyCallback', data)
+    const { historyUrlsNum } = options.get()
+    const { from, to } = data
+    const { relative: currentFrom } = parseUrlToObj(from)
+    const { relative: currentTo } = parseUrlToObj(to)
+    const isSame = currentFrom === currentTo
+    if (!isSame) {
+      urls.push(to)
+      urls = takeRight(urls, historyUrlsNum)
+      eventTrack.add({
+        type: EventType.History,
+        data: {
+          from: currentFrom || '/',
+          to: currentTo || '/',
+          urls: [...urls],
+        },
+        status: StatusType.Ok,
+        time: getTimestamp(),
+      })
+    }
   }
 }
 
@@ -106,6 +132,7 @@ const EventCollection = {
   },
   // 监听hashchange
   [EventType.HashChange]: hashCallback(),
+  [EventType.History]: historyCallback(),
 }
 
 export default EventCollection

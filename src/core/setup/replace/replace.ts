@@ -1,6 +1,6 @@
 import throttle from 'lodash/throttle'
-import { Callback, IReplaceParams, EventType } from '../../../types'
-import { on, EventEmitter, _global } from '../../../utils'
+import { Callback, IReplaceParams, EventType, voidFunc } from '../../../types'
+import { on, EventEmitter, _global, getCurrentHref } from '../../../utils'
 
 const eventEmitter = new EventEmitter()
 
@@ -28,6 +28,9 @@ const listenOrReplace = (type: EventType) => {
       break
     case EventType.HashChange:
       listenHashChange()
+      break
+    case EventType.History:
+      replaceHistory()
       break
   }
 }
@@ -62,4 +65,52 @@ const listenHashChange = () => {
       emit(EventType.HashChange, e)
     },
   })
+}
+
+let preHref: string = getCurrentHref()
+const replaceHistory = () => {
+  const onPopstate = _global.onpopstate
+  _global.onpopstate = function (this: any, ...args: any) {
+    const to = getCurrentHref()
+    const from = preHref
+    preHref = to
+    emit(EventType.History, {
+      from,
+      to,
+    })
+    onPopstate?.apply(this, args)
+  }
+  const replaceFn = (originalFn: voidFunc): voidFunc => {
+    return function (this: any, ...args: any[]) {
+      const url = args?.[2]
+      if (url) {
+        const from = preHref
+        const to = url
+        preHref = to
+        emit(EventType.History, {
+          from,
+          to,
+        })
+      }
+      return originalFn.apply(this, args)
+    }
+  }
+  replaceAop(_global.history, 'pushState', replaceFn)
+  replaceAop(_global.history, 'replaceState', replaceFn)
+}
+
+export function replaceAop(
+  source: { [key: string]: any },
+  name: string,
+  replacement: voidFunc,
+  isForced = false,
+) {
+  if (source === undefined) return
+  if (name in source || isForced) {
+    const original = source[name]
+    const wrapped = replacement(original)
+    if (typeof wrapped === 'function') {
+      source[name] = wrapped
+    }
+  }
 }
