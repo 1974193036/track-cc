@@ -1,5 +1,5 @@
 import { setupOptions } from './options'
-import { setupReplace } from './setup'
+import { setupCache, setupReplace } from './setup'
 import EventCollection from './event'
 import { EventType, type IOptions, type ViewModel } from '../types'
 import { setupDirective } from './directive'
@@ -7,6 +7,7 @@ import { setupDirective } from './directive'
 export const init = (options: IOptions) => {
   setupOptions(options)
   setupReplace()
+  setupCache(options)
 }
 
 export const install = (Vue: any, options: IOptions) => {
