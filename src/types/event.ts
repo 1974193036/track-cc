@@ -1,5 +1,6 @@
 import { IDeviceInfo } from './global'
 import { CacheType } from './options'
+import { Callback } from './base'
 
 export const enum StatusType {
   Ok = 'ok',
@@ -42,4 +43,9 @@ export interface IEventOptions {
   cacheType: CacheType
   projectKey: string
   maxEvents: number
+}
+
+export interface IReplaceParams {
+  type: EventType
+  callback: Callback
 }

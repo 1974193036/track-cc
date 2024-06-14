@@ -26,3 +26,24 @@ export const getUserAgent = () => navigator.userAgent
 export const isSupportFetch = () => {
   return 'fetch' in _global
 }
+
+export const getTargetDomByPointerEvent = (e: PointerEvent) => {
+  const el = document.elementFromPoint(e.pageX, e.pageY)
+  if (el) {
+    return el as HTMLElement
+  }
+  return null
+}
+
+export function htmlElementAsString(target: HTMLElement): string {
+  const tagName = target.tagName.toLowerCase()
+  if (tagName === 'body') {
+    return ''
+  }
+  let classNames = target.classList.value
+
+  classNames = classNames !== '' ? ` class='${classNames}'` : ''
+  const id = target.id ? ` id="${target.id}"` : ''
+  const innerText = target.innerText
+  return `<${tagName}${id}${classNames !== '' ? classNames : ''}>${innerText}</${tagName}>`
+}

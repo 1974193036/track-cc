@@ -105,6 +105,10 @@ class Options {
     }
   }
 
+  getSwitchMap() {
+    return this.switchMap
+  }
+
   getReport() {
     const { report } = this.options
     return report
@@ -136,7 +140,7 @@ __sunshine_track__.options = options
 export const setupOptions = (o: IOptions) => {
   options.set(o)
   const { report: reportOptions, cacheType, maxEvents, projectKey, log, userId } = options.get()
-  console.log(options.get())
+  console.log('options', options.get())
   eventTrack.setOptions({
     cacheType,
     projectKey,
@@ -148,3 +152,5 @@ export const setupOptions = (o: IOptions) => {
   })
   setLogFlag(log)
 }
+
+export default options

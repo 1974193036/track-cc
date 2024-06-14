@@ -3,7 +3,7 @@ import { getTimestamp, warning, __sunshine_track__ } from '../../utils'
 import isPlainObject from 'lodash/isPlainObject'
 import cloneDeep from 'lodash/cloneDeep'
 import { storage } from '../setup/cache/cache'
-// import report from '../report'
+import report from '../report'
 
 export class EventTrack {
   private data: IEventParams[] = []
@@ -77,7 +77,7 @@ export class EventTrack {
   report(data: IEventParams[]) {
     this.clearReportData()
     console.log('report===>', data)
-    // report.send(data, () => this.clearReportData())
+    report.send(data, () => this.clearReportData())
   }
 }
 
