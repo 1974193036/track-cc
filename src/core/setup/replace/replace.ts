@@ -1,7 +1,14 @@
 import throttle from 'lodash/throttle'
 import isFunction from 'lodash/isFunction'
 import { Callback, IReplaceParams, EventType, voidFunc, RequestMethod } from '../../../types'
-import { on, EventEmitter, _global, getCurrentHref, getTimestamp } from '../../../utils'
+import {
+  on,
+  EventEmitter,
+  _global,
+  getCurrentHref,
+  getTimestamp,
+  isSupportFetch,
+} from '../../../utils'
 import options from '../../options'
 
 // 判断请求的 url 需不需要过滤
@@ -45,6 +52,9 @@ const listenOrReplace = (type: EventType) => {
       break
     case EventType.XHR:
       replaceXhr()
+      break
+    case EventType.Fetch:
+      replaceFetch()
       break
   }
 }
@@ -174,6 +184,69 @@ const replaceXhr = () => {
         },
       })
       originalSend.apply(this, args)
+    }
+  })
+}
+
+function replaceFetch(): void {
+  if (!isSupportFetch()) {
+    return
+  }
+  replaceAop(_global, 'fetch', originalFetch => {
+    return function (url: any, config: Partial<Request> = {}): void {
+      const sTime = getTimestamp()
+      const method = (config && config.method) || 'GET'
+      let fetchData = {
+        type: EventType.Fetch,
+        method: (method as string).toLowerCase(),
+        requestData: config && config.body,
+        url,
+        response: '',
+      }
+      const headers = new Headers(config.headers || {})
+      Object.assign(headers, {
+        setRequestHeader: headers.set,
+      })
+      config = Object.assign({}, config, headers)
+      return originalFetch.apply(_global, [url, config]).then(
+        (res: any) => {
+          const tempRes = res.clone()
+          const eTime = getTimestamp()
+          fetchData = Object.assign({}, fetchData, {
+            elapsedTime: eTime - sTime,
+            Status: tempRes.status,
+            time: sTime,
+          })
+          tempRes.text().then((data: any) => {
+            if (checkIsDisabledUrl(url, method)) return
+            const { checkHttpStatus } = options.get()
+            // 用户设置handleHttpStatus函数来判断接口是否正确，只有接口报错时才保留response
+            if (isFunction(checkHttpStatus)) {
+              if (checkHttpStatus(data)) {
+                fetchData.response = data
+              } else {
+                fetchData.response = ''
+              }
+            } else {
+              fetchData.response = data
+            }
+            emit(EventType.Fetch, fetchData)
+          })
+          return res
+        },
+        // 接口报错
+        (err: any) => {
+          if (checkIsDisabledUrl(url, method)) return
+          const eTime = getTimestamp()
+          fetchData = Object.assign({}, fetchData, {
+            elapsedTime: eTime - sTime,
+            status: 0,
+            time: sTime,
+          })
+          emit(EventType.Fetch, fetchData)
+          throw err
+        },
+      )
     }
   })
 }

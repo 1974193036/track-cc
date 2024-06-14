@@ -35,4 +35,11 @@ export const setupReplace = () => {
         EventCollection[EventType.Http](data, EventType.XHR)
       },
     })
+  switchMap[EventType.Fetch] &&
+    addListenOrReplace({
+      type: EventType.Fetch,
+      callback: (data: HttpData) => {
+        EventCollection[EventType.Http](data, EventType.Fetch)
+      },
+    })
 }
