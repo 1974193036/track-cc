@@ -3,6 +3,7 @@ import isString from 'lodash/isString'
 import isNumber from 'lodash/isNumber'
 import isBoolean from 'lodash/isBoolean'
 import isArray from 'lodash/isArray'
+import isUndefined from 'lodash/isUndefined'
 import { throwError } from './log'
 
 interface IValidItem<T = any> {
@@ -61,4 +62,14 @@ export const validTypes = (validItems: IValidItem[] = []) => {
   }
 
   return true
+}
+
+export const unknownToString = (target: unknown) => {
+  if (isString(target)) {
+    return target as string
+  }
+  if (isUndefined(target)) {
+    return 'undefined'
+  }
+  return JSON.stringify(target)
 }

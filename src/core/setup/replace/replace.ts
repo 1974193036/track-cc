@@ -56,6 +56,9 @@ const listenOrReplace = (type: EventType) => {
     case EventType.Fetch:
       replaceFetch()
       break
+    case EventType.UnhandledRejection:
+      listenUnhandledRejection()
+      break
   }
 }
 
@@ -248,5 +251,15 @@ function replaceFetch(): void {
         },
       )
     }
+  })
+}
+
+const listenUnhandledRejection = () => {
+  on({
+    el: _global,
+    eventName: 'unhandledrejection',
+    event: (e: PromiseRejectionEvent) => {
+      emit(EventType.UnhandledRejection, e)
+    },
   })
 }

@@ -70,9 +70,11 @@ class Options {
   }
 
   setSwitchMap() {
-    const { xhr, fetch, error, whitescreen, hashchange, history, performance } = this.getSwitchs()
+    const { xhr, fetch, error, whitescreen, hashchange, history, performance, unhandledRejection } =
+      this.getSwitchs()
     this.switchMap[EventType.XHR] = xhr
     this.switchMap[EventType.Fetch] = fetch
+    this.switchMap[EventType.UnhandledRejection] = unhandledRejection
     this.switchMap[EventType.Error] = error
     this.switchMap[EventType.WhiteScreen] = whitescreen
     this.switchMap[EventType.HashChange] = hashchange
@@ -91,6 +93,7 @@ class Options {
       history = false,
       recordScreen = false,
       performance = false,
+      unhandledRejection = false,
     } = switchs
 
     return {
@@ -102,6 +105,7 @@ class Options {
       history,
       recordScreen,
       performance,
+      unhandledRejection,
     }
   }
 

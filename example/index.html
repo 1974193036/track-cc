@@ -15,6 +15,7 @@
     <button id="exceptionReq" onclick="onClickXhrError()">xhr异常请求</button>
     <button id="normalFetch" onclick="onClickNativeFetch()">Fetch正常请求</button>
     <button id="exceptionFetch" onclick="onClickNativeErrorFetch()">Fetch异常请求</button>
+    <button id="promiseError" onclick="promiseError()">promiseError</button>
   </body>
   <script>
     const options = {
@@ -31,6 +32,7 @@
         xhr: true, // xhr请求
         fetch: true, // fetch请求
         error: true, // 报错
+        unhandledRejection: true, // promise异常
         hashchange: true, // hash变化
         history: true, // history变化
         whitescreen: true, // 白屏
@@ -106,6 +108,16 @@
           console.log('err', err)
         },
       )
+    }
+
+    function promiseError() {
+      const promiseWrap = () =>
+        new Promise((resolve, reject) => {
+          reject(new Error('promise reject'))
+        })
+      promiseWrap().then(res => {
+        console.log('res', res)
+      })
     }
   </script>
 </html>

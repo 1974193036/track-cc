@@ -13,6 +13,7 @@ import {
   getTimestamp,
   htmlElementAsString,
   parseUrlToObj,
+  unknownToString,
 } from '../../utils'
 import eventTrack from './event'
 import report from '../report'
@@ -141,7 +142,7 @@ const EventCollection = {
   [EventType.HashChange]: hashCallback(),
   // 监听history页路由
   [EventType.History]: historyCallback(),
-  // 监听xhr
+  // 监听xhr、fetch
   [EventType.Http]: (data: HttpData, type: EventType.Fetch | EventType.XHR) => {
     // console.log(data, type)
     const result = httpTransform(data)
@@ -167,6 +168,31 @@ const EventCollection = {
         time: data.time,
       })
     }
+  },
+  // 监听promise异常
+  [EventType.UnhandledRejection]: (e: PromiseRejectionEvent) => {
+    console.log('UnhandledRejection', e)
+    const stackFrame = ErrorStackParser.parse(e.reason)[0]
+    const { fileName, columnNumber: column, lineNumber: line } = stackFrame
+    const message = unknownToString(e.reason.message || e.reason.stack)
+    const data = {
+      message,
+      fileName,
+      line,
+      column,
+      type: EventType.UnhandledRejection,
+    }
+    // eventTrack.add({
+    //   time: getTimestamp(),
+    //   data,
+    //   status: StatusType.Error,
+    // });
+    report.send({
+      type: EventType.UnhandledRejection,
+      time: getTimestamp(),
+      data,
+      status: StatusType.Error,
+    })
   },
 }
 

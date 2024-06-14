@@ -25,6 +25,7 @@ export interface ISwitch {
   xhr: boolean // xhr请求
   fetch: boolean // fetch请求
   error: boolean // 报错
+  unhandledRejection: boolean // promise异常
   whitescreen: boolean // 白屏
   hashchange: boolean // hash变化
   history: boolean // history变化

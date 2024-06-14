@@ -42,4 +42,9 @@ export const setupReplace = () => {
         EventCollection[EventType.Http](data, EventType.Fetch)
       },
     })
+  switchMap[EventType.UnhandledRejection] &&
+    addListenOrReplace({
+      type: EventType.UnhandledRejection,
+      callback: EventCollection[EventType.UnhandledRejection],
+    })
 }
