@@ -59,6 +59,9 @@ const listenOrReplace = (type: EventType) => {
     case EventType.UnhandledRejection:
       listenUnhandledRejection()
       break
+    case EventType.WhiteScreen:
+      whiteScreen()
+      break
   }
 }
 
@@ -262,4 +265,8 @@ const listenUnhandledRejection = () => {
       emit(EventType.UnhandledRejection, e)
     },
   })
+}
+
+const whiteScreen = () => {
+  emit(EventType.WhiteScreen)
 }

@@ -47,4 +47,9 @@ export const setupReplace = () => {
       type: EventType.UnhandledRejection,
       callback: EventCollection[EventType.UnhandledRejection],
     })
+  switchMap[EventType.WhiteScreen] &&
+    addListenOrReplace({
+      type: EventType.WhiteScreen,
+      callback: EventCollection[EventType.WhiteScreen],
+    })
 }

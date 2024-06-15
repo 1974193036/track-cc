@@ -18,6 +18,7 @@ import {
 import eventTrack from './event'
 import report from '../report'
 import { httpTransform } from '../transform'
+import { openWhiteScreen } from '../setup/whiteScreen'
 
 const hashCallback = () => {
   let urls: any[] = []
@@ -193,6 +194,24 @@ const EventCollection = {
       data,
       status: StatusType.Error,
     })
+  },
+  // 监听白屏
+  [EventType.WhiteScreen]: () => {
+    const { whiteBoxElements, skeletonProject } = options.get()
+    openWhiteScreen(
+      status => {
+        report.send({
+          status: StatusType.Ok,
+          type: EventType.WhiteScreen,
+          time: getTimestamp(),
+          data: status,
+        })
+      },
+      {
+        whiteBoxElements,
+        skeletonProject,
+      },
+    )
   },
 }
 
