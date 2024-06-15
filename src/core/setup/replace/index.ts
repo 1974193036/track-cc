@@ -2,6 +2,8 @@ import options from '../../options'
 import { EventType, type HttpData } from '../../../types'
 import EventCollection from '../../event'
 import { addListenOrReplace } from './replace'
+import report from '../../report'
+import WebPerformance from '../../../performance'
 
 export const setupReplace = () => {
   const switchMap = options.getSwitchMap()
@@ -52,4 +54,7 @@ export const setupReplace = () => {
       type: EventType.WhiteScreen,
       callback: EventCollection[EventType.WhiteScreen],
     })
+  if (switchMap[EventType.Performance]) {
+    new WebPerformance({ report })
+  }
 }
